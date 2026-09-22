@@ -3,28 +3,39 @@
 #include <chrono>
 
 int main() {
+
+    // Get RAM information
     MEMORYSTATUSEX mem = {};
     mem.dwLength = sizeof(mem);
 
     if (GlobalMemoryStatusEx(&mem)) {
 
+        std::cout << "Total RAM: "
+                  << mem.ullTotalPhys / (1024 * 1024)
+                  << " MB\n";
 
-        std::cout << "Total RAM: " << mem.ullTotalPhys / (1024 * 1024) << " MB\n";
+        std::cout << "Available RAM: "
+                  << mem.ullAvailPhys / (1024 * 1024)
+                  << " MB\n";
 
-        std::cout << "Available RAM: " << mem.ullAvailPhys / (1024 * 1024) << " MB\n";
+        std::cout << "Used RAM: "
+                  << (mem.ullTotalPhys - mem.ullAvailPhys) / (1024 * 1024)
+                  << " MB\n";
 
-        std::cout << "Used RAM: " << (mem.ullTotalPhys - mem.ullAvailPhys) / (1024 * 1024) << " MB\n";
-
-        std::cout << "RAM usage: " << mem.dwMemoryLoad << "%\n";
+        std::cout << "RAM usage: "
+                  << mem.dwMemoryLoad
+                  << "%\n";
     }
 
+    // Get initial CPU times
     FILETIME idleTime;
     FILETIME kernelTime;
     FILETIME userTime;
 
     GetSystemTimes(&idleTime, &kernelTime, &userTime);
 
-    Sleep(1000); // Sleep for 1 second
+    // Wait one second before checking again
+    Sleep(1000);
 
     FILETIME idleTime2;
     FILETIME kernelTime2;
@@ -32,10 +43,7 @@ int main() {
 
     GetSystemTimes(&idleTime2, &kernelTime2, &userTime2);
 
-    //std::cout << idleTime.dwLowDateTime << std::endl;
-    //std::cout << kernelTime.dwLowDateTime << std::endl;
-    //std::cout << userTime.dwLowDateTime << std::endl;   
-
+    // Convert the CPU times into 64-bit values
     ULARGE_INTEGER idle1;
     idle1.LowPart = idleTime.dwLowDateTime;
     idle1.HighPart = idleTime.dwHighDateTime;
@@ -60,7 +68,8 @@ int main() {
     user2.LowPart = userTime2.dwLowDateTime;
     user2.HighPart = userTime2.dwHighDateTime;
 
-     unsigned long long idle =
+    // Calculate the CPU time used during the one-second interval
+    unsigned long long idle =
         idle2.QuadPart - idle1.QuadPart;
 
     unsigned long long kernel =
@@ -69,15 +78,14 @@ int main() {
     unsigned long long user =
         user2.QuadPart - user1.QuadPart;
 
-
     unsigned long long total = kernel + user;
-
 
     unsigned long long busy = total - idle;
 
+    // Calculate CPU usage as a percentage
     double cpuUsage = (double)busy / total * 100.0;
 
-     std::cout << "CPU usage: "
+    std::cout << "CPU usage: "
               << cpuUsage
               << "%\n";
 }
