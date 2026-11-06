@@ -4,16 +4,13 @@
 #include <TlHelp32.h> // For number of processes
 
 int main() {
-    // ==========================================
-    // STATIC HARDWARE INFO (Queried only once!)
-    // ==========================================
-    
-    // 1. Get CPU Core Count once
+
+    //Get CPU Core Count once
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
     int logicalCores = sysInfo.dwNumberOfProcessors;
 
-    // 2. Get Total RAM once
+    //Get Total RAM once
     MEMORYSTATUSEX staticMem = {};
     staticMem.dwLength = sizeof(staticMem);
     GlobalMemoryStatusEx(&staticMem);
@@ -32,7 +29,7 @@ int main() {
         FILETIME userTime;
         GetSystemTimes(&idleTime, &kernelTime, &userTime);
 
-        // Wait one second before checking again
+        // Wait one second
         Sleep(1000);
 
         FILETIME idleTime2;
@@ -100,14 +97,16 @@ int main() {
         // Display system information
         system("cls");
 
-        // Print Info
 
+        std::cout << "Logical CPU Cores: "
+                  << logicalCores 
+                  << "\n";
 
         std::cout << "Total RAM: "
                   << totalRamMB
                   << " MB\n";
 
-        // Print
+        // Print Dynamic Info
         std::cout << "Available RAM: "
                   << mem.ullAvailPhys / (1024 * 1024)
                   << " MB\n";
