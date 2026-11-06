@@ -2,6 +2,8 @@
 #include <windows.h>
 #include <iostream>
 #include <chrono>
+#include <TlHelp32.h> // For number of processes
+
 
 int main() {
 
@@ -92,6 +94,24 @@ int main() {
             cpuUsage = (double)busy / total * 100.0;
         }
 
+        int processCount = 0;
+        HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        
+        if (hProcessSnap != INVALID_HANDLE_VALUE) {
+            PROCESSENTRY32 pe32;
+            pe32.dwSize = sizeof(PROCESSENTRY32);
+            
+            // Get the first process
+            if (Process32First(hProcessSnap, &pe32)) {
+                // Loop through all remaining processes
+                do {
+                    processCount++;
+                } while (Process32Next(hProcessSnap, &pe32));
+            }
+            // Clean up the handle
+            CloseHandle(hProcessSnap);
+        }
+
         // Display system information
         system("cls");
 
@@ -114,6 +134,16 @@ int main() {
         std::cout << "CPU usage: "
                   << cpuUsage
                   << "%\n";
+
+        std::cout << "System Uptime: "
+                  << GetTickCount64() / 1000 / 60 
+                  << " minutes\n";
+
+        std::cout << "Processes: "
+                  << processCount
+                  << "\n";
+
+        std::cout << "Press Ctrl+C to exit...\n";
     }
 
     return 0;
