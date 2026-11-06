@@ -1,25 +1,36 @@
 # Hardware Monitor
 
-A simple Windows hardware monitor written in C++.
+A simple Windows hardware monitor written in C++ that displays basic system information and resource usage directly in the terminal.
 
-## Current features
+## Current Features
 
 * Total RAM
 * Available RAM
 * Used RAM
-* RAM usage
-* CPU usage
+* RAM usage (%)
+* CPU usage (%)
+* Number of running processes
 
 ## Requirements
 
 * Windows
-* C++ compiler
+* C++ compiler (e.g. MinGW or MSVC)
 * Windows API
 
 ## Build
 
-Compile `main.cpp` with a Windows C++ compiler and run the resulting executable.
+Compile `main.cpp` using a Windows-compatible C++ compiler.
+
+## Run
+
+The program is designed to run inside **PowerShell** or **Command Prompt**.
+
+Navigate to the directory containing the executable and run:
+
+```powershell
+.\main.exe
+```
 
 ## Status
 
-This project is still being developed. More hardware information and features will be added over time.
+This project is still under development. More hardware information, monitoring capabilities, and features will be added over time.
